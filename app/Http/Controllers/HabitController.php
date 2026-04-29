@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Habit;
 use Illuminate\Support\Facades\Auth;
 use App\Models\HabitLog;
+use App\Models\Subscription;
 use Carbon\Carbon;
+use App\model\Users;
 
 class HabitController extends Controller
 {
@@ -37,6 +39,15 @@ class HabitController extends Controller
             'description'=>'nullable|string|max:1000',
             'frequency'=>'required|string|max:255',
         ]);
+        $userPlan = Auth::user()->getPlanAttribute();
+        if ($userPlan == 'free') {
+            $userHabitsCount = Auth::user()->habits()->count();
+            if ($userHabitsCount >= 5) {
+                return redirect()->back()
+                    ->withErrors(['limit' => 'Trop d\'habitudes. Passez au plan premium pour en ajouter plus.'])
+                    ->withInput();
+            }
+        }
         Auth::user()->habits()->create($request->only('name', 'description', 'frequency'));
         return redirect()->route('habits.index');
 

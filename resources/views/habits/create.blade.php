@@ -4,6 +4,16 @@
             <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
                 <h1 class="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">Nouvelle habitude</h1>
 
+                @if ($errors->any())
+                    <div class="mb-4 rounded-md bg-red-50 p-4 text-sm text-red-700 dark:bg-red-900 dark:text-red-200">
+                        <ul class="list-disc list-inside space-y-1">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <form method="POST" action="{{ route('habits.store') }}" class="space-y-4">
                     @csrf
 

@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('subscriptions', function (Blueprint $table){
-            $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('plan'); 
-            $table->string('status');
-            $table->timestamps();
+        Schema::table('subscriptions', function (Blueprint $table) {
+            if (Schema::hasColumn('subscriptions', 'stripe_customer_id')) {
+                $table->dropColumn('stripe_customer_id');
+            }
         });
     }
 
@@ -25,6 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('subscriptions');
+        Schema::table('subscriptions', function (Blueprint $table) {
+            $table->string('stripe_customer_id')->nullable();
+        });
     }
 };

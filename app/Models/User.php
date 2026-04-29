@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Habit;
+use App\Models\Subscription;
 
 class User extends Authenticatable
 {
@@ -46,5 +47,19 @@ class User extends Authenticatable
     public function habits()
     {
         return $this->hasMany(Habit::class);
+    }
+    //
+    public function subscription()
+    {
+        return $this->hasOne(Subscription::class);
+    }
+    // Return the subscription status of the user
+    public function getSubscriptionStatusAttribute()
+    {
+        return $this->subscription?->status ?? $this->subscription_status;
+    }
+    // return the subscription plan of the user
+    public function getPlanAttribute(){
+        return $this->subscription?->plan;
     }
 }
