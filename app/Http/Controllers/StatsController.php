@@ -3,13 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
+use App\Models\Achievement;
 use App\Models\HabitLog;
+use App\Services\AchievementService;
 use Carbon\Carbon;
 
 class StatsController extends Controller
 {
     public function index()
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         // total complété
@@ -68,11 +71,26 @@ class StatsController extends Controller
             ];
         }
 
+        $showAchievements = $user->plan !== 'free';
+        $achievements = [];
+        $unlocked = [];
+
+        if ($showAchievements) {
+            $achievementService = new AchievementService();
+            $achievementService->syncDefinitions();
+
+            $achievements = Achievement::all();
+            $unlocked = $user->achievements()->pluck('achievement_id')->toArray();
+        }
+
         return view('stats.index', compact(
             'totalCompleted',
             'successRate',
             'last7Days',
-            'calendar'
+            'calendar',
+            'achievements',
+            'unlocked',
+            'showAchievements'
         ));
     }
 }

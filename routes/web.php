@@ -3,9 +3,11 @@
 use App\Http\Controllers\ProfileController;
 use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AchievementController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HabitController;
 use App\Http\Controllers\StatsController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\WelcomeController;
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +34,15 @@ use App\Http\Controllers\WelcomeController;
     Route::get('/stats', [StatsController::class,'index'])
         ->middleware('auth')
         ->name('stats.index');
+    Route::get('/achievements', [AchievementController::class, 'index'])
+        ->middleware('auth')
+        ->name('achievements.index');
+    Route::get('/subscription', [SubscriptionController::class, 'index'])
+        ->middleware('auth')
+        ->name('subscription.index');
+    Route::post('/subscription/upgrade', [SubscriptionController::class, 'upgrade'])
+        ->middleware('auth')
+        ->name('subscription.upgrade');
 // Profile
     Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

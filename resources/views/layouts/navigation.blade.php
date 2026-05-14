@@ -12,9 +12,14 @@
                 <!-- Navigation Links -->
                 @auth
                 <div class="hidden sm:flex sm:items-center sm:space-x-2">
+                    @php $userPlan = Auth::user()->plan ?? 'free'; @endphp
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">{{ __('Dashboard') }}</x-nav-link>
                     <x-nav-link :href="route('habits.index')" :active="request()->routeIs('habits.*')">{{ __('Habitudes') }}</x-nav-link>
                     <x-nav-link :href="route('stats.index')" :active="request()->routeIs('stats.*')">{{ __('Statistiques') }}</x-nav-link>
+                    @if ($userPlan !== 'free')
+                        <x-nav-link :href="route('achievements.index')" :active="request()->routeIs('achievements.*')">{{ __('Achievements') }}</x-nav-link>
+                    @endif
+                    <x-nav-link :href="route('subscription.index')" :active="request()->routeIs('subscription.*')">{{ __('Abonnement') }}</x-nav-link>
                 </div>
                 @endauth
                 <!-- Toggle mode nuit jour -->
@@ -34,7 +39,12 @@
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
                             <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
-                                <div>{{ Auth::user()->name }}</div>
+                                <div class="flex items-center gap-2">
+                            <span>{{ Auth::user()->name }}</span>
+                            <span class="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700 dark:bg-blue-900 dark:text-blue-200">
+                                {{ ucfirst(Auth::user()->plan ?? 'free') }}
+                            </span>
+                        </div>
 
                                 <div class="ms-1">
                                     <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -82,6 +92,20 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('habits.index')" :active="request()->routeIs('habits.*')">
+                {{ __('Habitudes') }}
+            </x-responsive-nav-link>
+            @php $userPlan = Auth::user()->plan ?? 'free'; @endphp
+            <x-responsive-nav-link :href="route('stats.index')" :active="request()->routeIs('stats.*')">
+                {{ __('Statistiques') }}
+            </x-responsive-nav-link>
+            @if ($userPlan !== 'free')
+                <x-responsive-nav-link :href="route('achievements.index')" :active="request()->routeIs('achievements.*')">
+                    {{ __('Achievements') }}
+                </x-responsive-nav-link>
+            @endif
+            <x-responsive-nav-link :href="route('subscription.index')" :active="request()->routeIs('subscription.*')">
+                {{ __('Abonnement') }}</x-responsive-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->
@@ -90,9 +114,15 @@
                 <div class="px-4">
                     <div class="font-medium text-base text-gray-800 dark:text-gray-200">{{ Auth::user()->name }}</div>
                     <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                    <div class="mt-1 inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700 dark:bg-blue-900 dark:text-blue-200">
+                        {{ ucfirst(Auth::user()->plan ?? 'free') }}
+                    </div>
                 </div>
 
                 <div class="mt-3 space-y-1">
+                    <x-responsive-nav-link :href="route('subscription.index')">
+                        {{ __('Abonnement') }}
+                    </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('profile.edit')">
                         {{ __('Profile') }}
                     </x-responsive-nav-link>

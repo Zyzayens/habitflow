@@ -40,6 +40,24 @@
                         </div>
                     @endforeach
                 </div>
+
+                @if ($showAchievements)
+                    <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mt-8 mb-3">🎖 Achievements</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        @foreach($achievements as $achievement)
+                            @php $locked = ! in_array($achievement->id, $unlocked); @endphp
+                            <div class="rounded-lg border p-4 shadow-sm {{ $locked ? 'border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800' : 'border-green-300 bg-green-50 dark:border-green-700 dark:bg-green-900' }}">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">{{ $achievement->name }}</h3>
+                                    <span class="rounded-full px-3 py-1 text-xs font-semibold {{ $locked ? 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200' : 'bg-green-600 text-white' }}">
+                                        {{ $locked ? 'Bloqué' : 'Débloqué' }}
+                                    </span>
+                                </div>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">{{ $achievement->description }}</p>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
             </div>
         </div>
     </div>

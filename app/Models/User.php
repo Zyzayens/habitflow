@@ -7,9 +7,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Achievement;
 use App\Models\Habit;
 use App\Models\Subscription;
 
+/**
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Habit[] $habits
+ */
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -53,6 +57,14 @@ class User extends Authenticatable
     {
         return $this->hasOne(Subscription::class);
     }
+
+    public function achievements()
+    {
+        return $this->belongsToMany(Achievement::class, 'user_achievements')
+            ->withPivot('unlocked_at')
+            ->withTimestamps();
+    }
+
     // Return the subscription status of the user
     public function getSubscriptionStatusAttribute()
     {
@@ -60,6 +72,6 @@ class User extends Authenticatable
     }
     // return the subscription plan of the user
     public function getPlanAttribute(){
-        return $this->subscription?->plan;
+        return $this->subscription?->plan ?? 'free';
     }
 }

@@ -6,9 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Habit;
 use Illuminate\Support\Facades\Auth;
 use App\Models\HabitLog;
-use App\Models\Subscription;
+use App\Services\AchievementService;
 use Carbon\Carbon;
-use App\model\Users;
 
 class HabitController extends Controller
 {
@@ -39,17 +38,23 @@ class HabitController extends Controller
             'description'=>'nullable|string|max:1000',
             'frequency'=>'required|string|max:255',
         ]);
-        $userPlan = Auth::user()->getPlanAttribute();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $userPlan = $user->plan;
         if ($userPlan == 'free') {
-            $userHabitsCount = Auth::user()->habits()->count();
+            $userHabitsCount = $user->habits()->count();
             if ($userHabitsCount >= 5) {
                 return redirect()->back()
                     ->withErrors(['limit' => 'Trop d\'habitudes. Passez au plan premium pour en ajouter plus.'])
                     ->withInput();
             }
         }
-        Auth::user()->habits()->create($request->only('name', 'description', 'frequency'));
-        return redirect()->route('habits.index');
+        $user->habits()->create($request->only('name', 'description', 'frequency'));
+
+        $awarded = (new AchievementService())->check($user);
+
+        return redirect()->route('habits.index')
+            ->with('achievements', collect($awarded)->pluck('name')->toArray());
 
     }
 
@@ -121,6 +126,10 @@ class HabitController extends Controller
             ],
             ['completed'=>true]
         );
-        return redirect()->route('habits.index');
+
+        $awarded = (new AchievementService())->check($habit->user);
+
+        return redirect()->route('habits.index')
+            ->with('achievements', collect($awarded)->pluck('name')->toArray());
     }
 }
